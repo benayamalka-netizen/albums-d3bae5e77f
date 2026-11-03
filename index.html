@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#10151f">
+<meta name="robots" content="noindex">
+<title>אלבומי הישיבה</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;800&family=Assistant:wght@400;600&display=swap">
+<style>
+/* שבע שנים כציר: השנה העברית היא הניווט והכותרת הגדולה */
+:root{--bg:#10151f;--panel:#1a2230;--line:#2c3748;--fg:#f2ede2;--dim:#a3abb8;--gold:#d9a441;--display:"Frank Ruhl Libre",Georgia,serif;--body:"Assistant",Arial,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.5 var(--body)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1400px;margin:auto;padding-right:max(16px,env(safe-area-inset-right,0px));padding-left:max(16px,env(safe-area-inset-left,0px))}
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.strip{display:grid;grid-template-columns:repeat(6,1fr);height:clamp(190px,32vw,380px);opacity:.5}
+.strip img{width:100%;height:100%;object-fit:cover;display:block;min-width:0}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 8%,transparent 75%)}
+.hero .txt{position:absolute;z-index:1;inset:auto 0 0}
+h1{font:800 clamp(44px,8vw,104px)/1 var(--display);margin:0 0 6px}
+.sub{color:var(--dim);margin:0 0 20px;font-variant-numeric:tabular-nums}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:10px}
+.row{display:flex;gap:6px 18px;flex-wrap:wrap;align-items:center}
+.years button{font:500 22px var(--display);color:var(--dim);padding:2px 4px;border-bottom:2px solid transparent}
+.years button.on{color:var(--gold);border-color:var(--gold)}
+input{flex:1 1 170px;min-width:0;background:var(--panel);border:1px solid var(--line);color:var(--fg);font:inherit;padding:7px 12px}
+.cats{margin-top:8px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;gap:6px}
+.cats button{white-space:nowrap;padding:3px 12px;border:1px solid var(--line);font-size:14px;color:var(--dim)}
+.cats button.on{background:var(--gold);border-color:var(--gold);color:#10151f;font-weight:600}
+.yr{font:800 clamp(52px,9vw,110px)/1 var(--display);color:var(--line);margin:34px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:14px}
+.card{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--panel);text-decoration:none}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.card:hover img{transform:scale(1.05)}
+.card .cap{position:absolute;inset:auto 0 0;padding:34px 14px 10px;background:linear-gradient(transparent,rgba(8,11,17,.92))}
+.card b{display:block;font:500 20px/1.2 var(--display);text-wrap:balance;color:#f2ede2}
+.card small{color:#c8ccd4;font-variant-numeric:tabular-nums}
+.head{padding-block:22px 12px}
+.head h2{font:800 clamp(30px,5vw,58px)/1.1 var(--display);margin:12px 0 6px;text-wrap:balance}
+.head .sub{margin-bottom:12px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:6px 14px;border:1px solid var(--line);font-size:14px;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.mason{display:flex;gap:8px;align-items:flex-start;padding-bottom:40px}
+.col{flex:1;min-width:0;display:grid;gap:8px}
+.ph{position:relative;display:block;background:var(--panel);min-height:120px}
+.ph img{width:100%;display:block}
+.play{position:absolute;inset:0;display:grid;place-items:center;font-size:44px;color:#fff;text-shadow:0 2px 10px #000}
+#sent{height:1px}
+.none{color:var(--dim);padding:50px 0}
+.lb{position:fixed;inset:0;z-index:20;background:#080b11;display:grid;grid-template-rows:auto 1fr}
+.lbtop{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;color:#f2ede2}
+.lbtop span{flex:1;min-width:0;font-variant-numeric:tabular-nums}
+.stage{position:relative;min-height:0;touch-action:pan-y}
+.stage img{max-width:100%;max-height:100%;position:absolute;inset:0;margin:auto}
+.stage iframe{width:100%;height:100%;border:0;display:block}
+.nav{position:absolute;top:50%;translate:0 -50%;font-size:38px;color:#f2ede2;background:rgba(8,11,17,.55);width:48px;height:72px;z-index:1;display:grid;place-items:center;text-decoration:none}
+.next{left:8px}.prev{right:8px}
+@media(max-width:640px){.nav{display:none}}
+@media(prefers-reduced-motion:reduce){.card img{transition:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),app=$('#app');
+const th=(id,w)=>`https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let K='',A=[],year='',cat='',q='',lbOn=null,io=null,cur=null;
+const he=n=>n.toLocaleString('he-IL');
+const cover=a=>{const p=a.f.filter(x=>!x[1]);return (p[Math.floor(p.length/3)]||a.f[0])[0]};
+
+function home(){
+  if(io)io.disconnect();
+  const years=[...new Set(A.map(a=>a.y))],cats=[...new Set(A.map(a=>a.c))];
+  const total=A.reduce((s,a)=>s+a.f.length,0);
+  const big=[...A].sort((a,b)=>b.f.length-a.f.length).slice(0,6);
+  app.innerHTML=`<header class="hero"><div class="strip">${big.map(a=>`<img alt="" src="${th(cover(a),500)}">`).join('')}</div>
+  <div class="txt wrap"><h1>אלבומי הישיבה</h1><p class="sub">${he(total)} תמונות וסרטונים · ${A.length} אירועים · ${years.length} שנים</p></div></header>
+  <div class="bar"><div class="wrap"><div class="row"><div class="row years" role="group" aria-label="שנה">
+  <button data-y="" class="${year?'':'on'}">הכול</button>${years.map(y=>`<button data-y="${esc(y)}" class="${y==year?'on':''}">${esc(y)}</button>`).join('')}</div>
+  <input id="q" type="search" placeholder="חיפוש אירוע, רב או חג" aria-label="חיפוש" value="${esc(q)}">
+  <button class="btn" id="rnd">תמונה אקראית</button></div>
+  <div class="row cats" role="group" aria-label="נושא"><button data-c="" class="${cat?'':'on'}">כל הנושאים</button>${cats.map(c=>`<button data-c="${esc(c)}" class="${c==cat?'on':''}">${esc(c)}</button>`).join('')}</div></div></div>
+  <main class="wrap" id="list"></main>`;
+  list();
+  app.querySelectorAll('[data-y]').forEach(b=>b.onclick=()=>{year=b.dataset.y;home()});
+  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{cat=b.dataset.c;home()});
+  $('#q').oninput=e=>{q=e.target.value;list()};
+  $('#rnd').onclick=()=>{const a=A[Math.floor(Math.random()*A.length)];location.hash=`${K}/a/${a.id}/${Math.floor(Math.random()*a.f.length)}`};
+}
+function list(){
+  const t=q.trim(),m=A.filter(a=>(!year||a.y==year)&&(!cat||a.c==cat)&&(!t||(a.t+' '+a.y+' '+a.c).includes(t)));
+  const ys=[...new Set(m.map(a=>a.y))];
+  $('#list').innerHTML=ys.map(y=>`<section><div class="yr">${esc(y)}</div><div class="grid">${m.filter(a=>a.y==y).map(a=>`<a class="card" href="#${K}/a/${a.id}"><img loading="lazy" alt="" src="${th(cover(a),640)}"><span class="cap"><b>${esc(a.t)}</b><small>${he(a.f.length)} פריטים</small></span></a>`).join('')}</div></section>`).join('')||'<p class="none">לא נמצאו אלבומים. נסו מילה אחרת או בחרו "הכול".</p>';
+}
+function album(a){
+  const n=innerWidth<600?2:innerWidth<1000?3:innerWidth<1500?4:5;
+  app.innerHTML=`<div class="wrap"><div class="head"><a class="btn" href="#${K}">→ כל האלבומים</a><h2>${esc(a.t)}</h2><p class="sub">${esc(a.y)} · ${esc(a.c)} · ${he(a.f.length)} פריטים</p>
+  <div class="tools"><a class="btn" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/${a.id}">פתיחה והורדה בדרייב</a><button class="btn" id="cp">העתקת קישור לאלבום</button></div></div>
+  <div class="mason">${'<div class="col"></div>'.repeat(n)}</div><div id="sent"></div></div>`;
+  scrollTo(0,0);
+  $('#cp').onclick=e=>navigator.clipboard.writeText(location.href).then(()=>e.target.textContent='הקישור הועתק').catch(()=>{});
+  const cols=[...app.querySelectorAll('.col')];let i=0;
+  const more=()=>{const end=Math.min(i+30,a.f.length);for(;i<end;i++){const [id,v]=a.f[i],b=document.createElement('a');b.className='ph';b.href=`#${K}/a/${a.id}/${i}`;b.innerHTML=`<img loading="lazy" alt="${esc(a.t)} ${i+1}" src="${th(id,520)}">${v?'<span class="play">▶</span>':''}`;cols[i%n].append(b)}if(i>=a.f.length&&io)io.disconnect()};
+  more();if(io)io.disconnect();io=new IntersectionObserver(e=>{if(e[0].isIntersecting)more()},{rootMargin:'900px'});io.observe($('#sent'));
+}
+function light(a,i){
+  closeLb();
+  const el=document.createElement('div');el.className='lb';el.setAttribute('role','dialog');el.setAttribute('aria-label',a.t);
+  const [id,v]=a.f[i],n=a.f.length;
+  el.innerHTML=`<div class="lbtop"><a class="btn" href="#${K}/a/${a.id}">✕ סגירה</a><span>${esc(a.t)} · ${i+1} מתוך ${he(n)}</span>
+  <button class="btn" id="cp2">העתקת קישור</button><a class="btn" target="_blank" rel="noopener" href="https://drive.google.com/uc?export=download&id=${id}">הורדה</a></div>
+  <div class="stage">${v?`<iframe src="https://drive.google.com/file/d/${id}/preview" allow="autoplay;fullscreen" title="סרטון"></iframe>`:`<img alt="${esc(a.t)} ${i+1}" src="${th(id,520)}"><img alt="" src="${th(id,1920)}">`}
+  ${i>0?`<a class="nav prev" href="#${K}/a/${a.id}/${i-1}" aria-label="הקודם">›</a>`:''}${i<n-1?`<a class="nav next" href="#${K}/a/${a.id}/${i+1}" aria-label="הבא">‹</a>`:''}</div>`;
+  document.body.append(el);document.body.style.overflow='hidden';lbOn=el;
+  [i-1,i+1].forEach(k=>{if(a.f[k]&&!a.f[k][1])new Image().src=th(a.f[k][0],1920)});
+  $('#cp2',el).onclick=e=>navigator.clipboard.writeText(location.href).then(()=>e.target.textContent='הועתק').catch(()=>{});
+  let sx=null;const st=$('.stage',el);
+  st.ontouchstart=e=>sx=e.touches[0].clientX;
+  st.ontouchend=e=>{if(sx==null)return;const d=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(d)>50){const k=d>0?i+1:i-1;if(a.f[k])location.replace(`#${K}/a/${a.id}/${k}`)}};
+  lbOn.go=k=>{if(a.f[k])location.replace(`#${K}/a/${a.id}/${k}`)};lbOn.i=i;lbOn.back=`#${K}/a/${a.id}`;
+}
+function closeLb(){if(lbOn){lbOn.remove();lbOn=null;document.body.style.overflow=''}}
+addEventListener('keydown',e=>{if(!lbOn)return;if(e.key=='Escape')location.hash=lbOn.back;if(e.key=='ArrowLeft')lbOn.go(lbOn.i+1);if(e.key=='ArrowRight')lbOn.go(lbOn.i-1)});
+function route(){
+  const m=location.hash.match(/^#[^/]+\/a\/([^/]+)(?:\/(\d+))?/),a=m&&A.find(x=>x.id==m[1]);
+  if(!a){closeLb();cur=null;home();return}
+  if(cur!==a.id){album(a);cur=a.id}
+  if(m[2]!=null&&a.f[+m[2]])light(a,+m[2]);else closeLb();
+}
+addEventListener('hashchange',route);
+const denied=()=>{app.innerHTML='<p class="wrap none">הגישה לאלבומים היא דרך הקישור המלא בלבד. בקשו את הקישור ממי ששיתף אתכם.</p>'};
+K=location.hash.slice(1).split('/')[0];
+(async()=>{
+  if(!K)return denied();
+  try{
+    const raw=Uint8Array.from(atob(K.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+    const key=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']);
+    const b=new Uint8Array(await (await fetch('catalog.bin')).arrayBuffer());
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},key,b.slice(12));
+    A=JSON.parse(new TextDecoder().decode(pt));route();
+  }catch(e){denied()}
+})();
+</script>
+</body>
+</html>
