@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>ניהול אלבומים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#2456b8;--gold:#f5b335;--ink:#1c2740;--muted:#667090;--line:#eadfcf;--cream:#fffaf1}
+*{box-sizing:border-box}
+body{margin:0;font-family:Assistant,system-ui,sans-serif;color:var(--ink);background:var(--cream)}
+header{background:linear-gradient(90deg,var(--blue),#3b7be0);color:#fff;padding:14px 18px}
+header h1{margin:0;font-size:22px;font-weight:800}
+main{max-width:900px;margin:auto;padding:18px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+input[type=search]{flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--line);border-radius:999px;font:16px Assistant,sans-serif;background:#fff}
+button{border:0;border-radius:999px;padding:10px 18px;font:700 15px Assistant,sans-serif;cursor:pointer;background:var(--gold);color:var(--ink)}
+button.alt{background:#fff;color:var(--blue);border:1px solid var(--line)}
+.row{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:8px}
+.row.hid{opacity:.5;background:#fdf1ee}
+.row input{width:20px;height:20px;accent-color:var(--blue)}
+.row .t{flex:1;font-weight:600}
+.row .s{color:var(--muted);font-size:14px}
+#out{margin-top:16px;background:#fff;border:1px dashed var(--blue);border-radius:14px;padding:14px;white-space:pre-wrap;word-break:break-all;font:14px ui-monospace,monospace;display:none}
+.note{color:var(--muted);font-size:14px;margin:6px 0 14px}
+</style>
+</head>
+<body>
+<header><h1>ניהול אלבומים: סימון אלבומים להסתרה</h1></header>
+<main>
+  <p class="note">סמנו את האלבומים שלא ייראו לאף אחד, ואז לחצו "הפקת רשימה". הרשימה תישלח לבנייה מחדש של הקטלוג המוצפן, והקישור החדש יוצא ממנה. שימו לב: זה דף סטטי, והוא עובד רק עם הקישור המלא.</p>
+  <div class="tools">
+    <input type="search" id="q" placeholder="חיפוש אלבום…">
+    <button class="alt" id="all">בטל את כל הסימונים</button>
+    <button id="export">הפקת רשימת מוסתרים</button>
+  </div>
+  <div id="list"></div>
+  <div id="out"></div>
+</main>
+<script>
+const KEY = location.hash.slice(1).split('/')[0];
+const list = document.getElementById('list');
+const out = document.getElementById('out');
+let A = [];
+const hidden = new Set();
+
+function draw() {
+  const q = document.getElementById('q').value.trim();
+  list.innerHTML = A
+    .filter(a => !q || a.t.includes(q) || a.c.includes(q) || a.y.includes(q))
+    .map(a => `<label class="row ${hidden.has(a.id) ? 'hid' : ''}">
+      <input type="checkbox" data-id="${a.id}" ${hidden.has(a.id) ? 'checked' : ''}>
+      <span class="t">${a.t.replace(/</g, '&lt;')}</span>
+      <span class="s">${a.y} · ${a.c} · ${a.f.length}</span>
+    </label>`).join('');
+}
+list.onchange = e => {
+  const id = e.target.dataset.id;
+  e.target.checked ? hidden.add(id) : hidden.delete(id);
+  draw();
+};
+document.getElementById('q').oninput = draw;
+document.getElementById('all').onclick = () => { hidden.clear(); draw(); };
+document.getElementById('export').onclick = () => {
+  out.style.display = 'block';
+  out.textContent = JSON.stringify([...hidden], null, 2);
+};
+
+(async () => {
+  try {
+    const raw = Uint8Array.from(atob(KEY.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+    const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
+    const b = new Uint8Array(await (await fetch('catalog.bin')).arrayBuffer());
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b.slice(0, 12) }, key, b.slice(12));
+    A = JSON.parse(new TextDecoder().decode(pt));
+    draw();
+  } catch (e) {
+    list.innerHTML = '<p class="note">צריך לפתוח את הדף עם הקישור המלא (כולל החלק אחרי #).</p>';
+  }
+})();
+</script>
+</body>
+</html>
