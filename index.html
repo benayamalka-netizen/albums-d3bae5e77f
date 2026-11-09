@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;800&family=Assistant:wght@400;600;700&display=swap">
 <style>
-:root{--bg:#e9e7df;--panel:#f7f5ef;--panel2:#d2d1b2;--line:#c9b89c;--fg:#3b2100;--dim:#7a5a33;--gold:#613100;--gold2:#c08e5b;--r:10px;--ease:cubic-bezier(.22,.8,.24,1);--display:"Frank Ruhl Libre",Georgia,serif;--body:"Assistant",Arial,sans-serif;color-scheme:light}
+:root{--bg:#f6f4ee;--panel:#ffffff;--panel2:#efe9da;--line:#c9b89c;--fg:#3b2100;--dim:#7a5a33;--gold:#613100;--gold2:#c08e5b;--r:10px;--ease:cubic-bezier(.22,.8,.24,1);--display:"Frank Ruhl Libre",Georgia,serif;--body:"Assistant",Arial,sans-serif;color-scheme:light}
 *{box-sizing:border-box}
 html{overflow-x:clip}
 html,body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.5 var(--body)}
@@ -22,13 +22,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wrap{max-width:1400px;margin:auto;padding-right:max(16px,env(safe-area-inset-right,0px));padding-left:max(16px,env(safe-area-inset-left,0px))}
 
 /* ===== כותרת ראשית ===== */
-.hero{position:relative;overflow:hidden;min-height:clamp(320px,48vw,560px);display:flex;align-items:flex-end;border-bottom:1px solid var(--line)}
+.hero{position:relative;overflow:hidden;min-height:clamp(420px,58vw,680px);display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;border-bottom:1px solid var(--line)}
 .strip{position:absolute;inset:-40px 0 0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:1fr 1fr;gap:3px;opacity:.55;will-change:transform}
 .strip img{width:100%;height:100%;object-fit:cover;display:block;min-width:0;animation:kb 24s ease-in-out infinite alternate}
 .strip img:nth-child(1){grid-column:span 2;grid-row:span 2}
 .strip img:nth-child(6){grid-column:span 2}
 @keyframes kb{from{transform:scale(1)}to{transform:scale(1.08)}}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 10%,rgba(97,49,0,.7) 45%,rgba(97,49,0,.15))}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 10%,rgba(233,231,223,.55) 45%,rgba(97,49,0,.15))}
 .hero .txt{position:relative;z-index:1;width:100%;margin:0 auto;padding-block:0 28px;animation:rise .9s var(--ease) both}
 @keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 .kicker{color:var(--gold);letter-spacing:.12em;font-weight:700;font-size:14px;margin:0 0 6px}
@@ -229,6 +229,8 @@ select{background:var(--panel);border:1px solid var(--line);border-radius:999px;
   .hs{height:62vh}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv,.lz{opacity:1;transform:none;filter:none}}
+.hero-logo{position:relative;z-index:2;display:flex;justify-content:center;padding:22px 12px 0}
+.hero-logo img{height:clamp(130px,20vw,210px);width:auto;max-width:90vw;object-fit:contain;background:rgba(255,255,255,.85);border-radius:18px;padding:10px 16px;box-shadow:0 10px 30px rgba(97,49,0,.18)}
 </style>
 </head>
 <body>
@@ -280,6 +282,7 @@ function home(){
   const allN=A.filter(inYr).reduce((s,a)=>s+a.f.length,0);
   const tags=TAGS.map(t=>[t,A.filter(a=>a.t.includes(t)).length]).filter(x=>x[1]>=2);
   app.innerHTML=`<header class="hero"><div class="strip">${big.map(a=>`<img alt="" src="${th(cover(a),700)}">`).join('')}</div>
+  <div class="hero-logo"><img src="logo.png" alt="מוסדות קריית משה מצפה יריחו"></div>
   <div class="txt wrap"><p class="kicker">ארכיון התמונות והסרטונים</p><h1>אלבום תמונות- ישיבת מאור טוביה</h1>
   <ul class="stats"><li><b>${he(total-tv)}</b> תמונות</li><li><b>${he(tv)}</b> סרטונים</li><li><b>${A.length}</b> אירועים</li><li><b>${years.length}</b> שנים</li></ul></div></header>
   <div class="bar"><div class="wrap"><div class="row"><div class="row years" role="group" aria-label="שנה">
