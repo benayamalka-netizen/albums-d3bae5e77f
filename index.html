@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#613100">
 <meta name="robots" content="noindex">
-<title>אלבומי הישיבה</title>
+<title>אלבום תמונות- ישיבת מאור טוביה</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -280,7 +280,7 @@ function home(){
   const allN=A.filter(inYr).reduce((s,a)=>s+a.f.length,0);
   const tags=TAGS.map(t=>[t,A.filter(a=>a.t.includes(t)).length]).filter(x=>x[1]>=2);
   app.innerHTML=`<header class="hero"><div class="strip">${big.map(a=>`<img alt="" src="${th(cover(a),700)}">`).join('')}</div>
-  <div class="txt wrap"><p class="kicker">ארכיון התמונות והסרטונים</p><h1>אלבומי הישיבה</h1>
+  <div class="txt wrap"><p class="kicker">ארכיון התמונות והסרטונים</p><h1>אלבום תמונות- ישיבת מאור טוביה</h1>
   <ul class="stats"><li><b>${he(total-tv)}</b> תמונות</li><li><b>${he(tv)}</b> סרטונים</li><li><b>${A.length}</b> אירועים</li><li><b>${years.length}</b> שנים</li></ul></div></header>
   <div class="bar"><div class="wrap"><div class="row"><div class="row years" role="group" aria-label="שנה">
   <button data-y="" class="${year?'':'on'}">הכול</button>${years.map(y=>`<button data-y="${esc(y)}" class="${y==year?'on':''}">${esc(y)}</button>`).join('')}</div>
