@@ -470,7 +470,24 @@ function light(a,i){
 function closeLb(keep){clearTimeout(ssTimer);if(!keep){slideshow=false;lastI=null}if(lbOn){lbOn.remove();lbOn=null;document.body.style.overflow=''}}
 addEventListener('keydown',e=>{if(!lbOn)return;if(e.key=='Escape')location.hash=lbOn.back;if(e.key=='ArrowLeft')lbOn.go(lbOn.i+1);if(e.key=='ArrowRight')lbOn.go(lbOn.i-1);if(e.key==' '){e.preventDefault();lbOn.ss()}});
 function refreshHearts(){app.querySelectorAll('.ph').forEach(p=>{const a=A.find(x=>x.id==p.dataset.aid),f=a?.f[+p.dataset.i];if(!f)return;const has=FAV.has(a.id+':'+f[0]),b=p.querySelector('.hb');if(b){b.classList.toggle('on',has);b.textContent=has?'♥':'♡'}})}
+let heroTimer=null;
+function startHero(){
+  clearInterval(heroTimer);
+  const imgs=[...document.querySelectorAll('.strip img')];
+  if(!imgs.length||RM||A.length<2) return;
+  const pool=[...A].sort((a,b)=>b.f.length-a.f.length).slice(0,40);
+  let n=imgs.length;
+  heroTimer=setInterval(()=>{
+    const img=imgs[n%imgs.length];
+    const a=pool[n%pool.length];
+    n++;
+    img.style.transition='opacity .6s';
+    img.style.opacity='0';
+    setTimeout(()=>{ img.src=th(cover(a),700); img.onload=()=>{img.style.opacity='1'}; },600);
+  },6000);
+}
 function route(){
+  clearInterval(heroTimer); heroTimer=null;
   if(/^#[^/]+\/fav$/.test(location.hash)){const was=!!lbOn;closeLb();if(cur!='fav'){cur='fav';favs()}else if(was)refreshHearts();return}
   const m=location.hash.match(/^#[^/]+\/a\/([^/]+)(?:\/(\d+))?/),a=m&&A.find(x=>x.id==m[1]);
   if(!a){closeLb();cur=null;home();return}
@@ -478,6 +495,7 @@ function route(){
   if(cur!==a.id){closeLb();album(a);cur=a.id}else{const was=!!lbOn;closeLb();if(was)refreshHearts()}
 }
 addEventListener('hashchange',route);
+new MutationObserver(()=>{ if(document.querySelector('.strip') && !heroTimer) startHero(); }).observe(app,{childList:true});
 const topB=$('#top');topB.onclick=()=>scrollTo({top:0,behavior:RM?'auto':'smooth'});
 const denied=()=>{app.innerHTML='<p class="wrap none">הגישה לאלבומים היא דרך הקישור המלא בלבד. בקשו את הקישור ממי ששיתף אתכם.</p>'};
 K=location.hash.slice(1).split('/')[0];
