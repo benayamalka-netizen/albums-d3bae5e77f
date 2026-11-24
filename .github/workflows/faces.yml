@@ -1,0 +1,36 @@
+name: עדכון זיהוי פנים
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # every night (UTC)
+  push:
+    paths: ['catalog.bin']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: faces
+  cancel-in-progress: false
+
+jobs:
+  faces:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -q opencv-python-headless numpy scikit-learn cryptography
+      - name: Scan new photos and regroup
+        env:
+          ALBUM_PASSWORD: ${{ secrets.ALBUM_PASSWORD }}
+        run: python tools/update_faces.py .
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898208+github-actions[bot]@users.noreply.github.com"
+          git add people.bin faces.bin
+          git diff --cached --quiet || (git commit -m "עדכון אוטומטי של זיהוי פנים" && git push)

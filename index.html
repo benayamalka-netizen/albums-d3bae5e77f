@@ -465,7 +465,7 @@ function favs(){
 
 /* ===== אנשים (זיהוי פנים) ===== */
 let PH={}; // מזהה תמונה -> [אלבום, אינדקס]
-const pname=(k)=>NAMES[k]||`אדם ${k+1}`;
+const pkey=k=>P[k]?.k??k,pname=k=>NAMES[pkey(k)]||`אדם ${k+1}`;
 function avatar(p){
   const d=document.createElement('span');d.className='av';
   const im=new Image();im.alt='';im.src=p.a;im.style.cssText='inset:0;width:100%;height:100%';onLoad(im);d.append(im);return d;
@@ -484,11 +484,11 @@ function person(k){
   const p=P[k],items=p.p.map(([id])=>PH[id]).filter(Boolean);
   app.innerHTML=`<header class="ahero"><div class="wrap"><a class="btn" href="#${K}/people">→ כל האנשים</a>
   <div class="phd"><span id="pav"></span><div><h2>${esc(pname(k))}</h2><p class="meta">${he(items.length)} תמונות מתוך ${he(new Set(items.map(x=>x[0].id)).size)} אירועים</p>
-  <div class="tools"><button class="btn" id="nm">✎ ${NAMES[k]?'שינוי השם':'תנו שם'}</button></div></div></div></div></header>
+  <div class="tools"><button class="btn" id="nm">✎ ${NAMES[pkey(k)]?'שינוי השם':'תנו שם'}</button></div></div></div></div></header>
   ${viewBar(items.length)}<div class="wrap" id="gh"></div><div style="height:50px"></div>`;
   $('#pav').replaceWith(avatar(p));
   scrollTo({top:0,behavior:'instant'});
-  $('#nm').onclick=()=>{const v=prompt('שם האדם (נשמר בדפדפן הזה בלבד):',NAMES[k]||'');if(v==null)return;v.trim()?NAMES[k]=v.trim():delete NAMES[k];store.set('peopleNames',NAMES);person(k)};
+  $('#nm').onclick=()=>{const v=prompt('שם האדם (נשמר בדפדפן הזה בלבד):',NAMES[pkey(k)]||'');if(v==null)return;v.trim()?NAMES[pkey(k)]=v.trim():delete NAMES[pkey(k)];store.set('peopleNames',NAMES);person(k)};
   gallery($('#gh'),items,pname(k));bindViews($('#gh'),items,pname(k));
 }
 
