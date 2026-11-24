@@ -188,6 +188,21 @@ select{background:var(--panel);border:1px solid var(--line);border-radius:999px;
 .sib b{font:500 17px/1.2 var(--display);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sib.nx{flex-direction:row-reverse;text-align:left}
 
+/* ===== אנשים ===== */
+.ppl{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:22px 16px;padding-block:26px 60px}
+.pp{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;text-align:center}
+.av{position:relative;width:min(100%,130px);aspect-ratio:1;border-radius:50%;overflow:hidden;background:var(--panel2);box-shadow:0 4px 14px rgba(97,49,0,.18);border:3px solid #fff;transition:transform .35s var(--ease),box-shadow .35s}
+.av img{position:absolute;max-width:none;opacity:0;transition:opacity .4s}
+.av img.ld{opacity:1}
+.pp:hover .av{transform:translateY(-4px) scale(1.04);box-shadow:0 12px 26px rgba(97,49,0,.3)}
+.pp b{font:500 17px/1.2 var(--display)}
+.pp small{color:var(--dim);font-size:13px;font-variant-numeric:tabular-nums}
+.ahero .av{width:96px;flex:none}
+.phd{display:flex;align-items:center;gap:18px;margin-top:16px}
+.phd h2{margin:0 0 4px}
+.ahero:not(:has(.bgi)) .meta{color:var(--dim)}
+.note{color:var(--dim);font-size:14px;margin:18px 0 0}
+
 /* ===== מסך מלא ===== */
 .lb{position:fixed;inset:0;z-index:20;background:rgba(5,7,11,.97);display:grid;grid-template-rows:auto 1fr auto;animation:lbin .35s var(--ease)}
 @keyframes lbin{from{opacity:0}to{opacity:1}}
@@ -231,6 +246,14 @@ select{background:var(--panel);border:1px solid var(--line);border-radius:999px;
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv,.lz{opacity:1;transform:none;filter:none}}
 .hero-logo{position:relative;z-index:2;display:flex;justify-content:flex-start;padding:18px clamp(16px,4vw,48px) 0}
 .hero-logo img{height:clamp(180px,28vw,300px);width:auto;max-width:90vw;object-fit:contain;background:rgba(255,255,255,.85);border-radius:18px;padding:10px 16px;box-shadow:0 10px 30px rgba(97,49,0,.18)}
+.login{max-width:420px;text-align:center;padding-block:10vh 40px}
+.login img{height:140px;width:auto;margin-bottom:10px}
+.login h1{font-size:clamp(30px,6vw,44px);text-shadow:none}
+.login form{display:flex;gap:8px;margin-top:16px}
+.login input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:999px;font:inherit;padding:9px 16px;color:var(--fg)}
+.login .wa{background:#1f8f4e;border-color:#1f8f4e;color:#fff;font-weight:700;margin-top:6px}
+.login .wa:hover{background:#17733e;color:#fff}
+.login .err{color:#a3261b;min-height:1.5em}
 </style>
 </head>
 <body>
@@ -241,7 +264,8 @@ const $=(s,r=document)=>r.querySelector(s),app=$('#app');
 const th=(id,w)=>`https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let K='',A=[],year='',cat='',q='',sort='new',lbOn=null,cur=null,ssTimer=null,slideshow=false,lastI=null,galCleanup=null;
+let K='',A=[],P=[],NAMES=store_get('peopleNames',{}),year='',cat='',q='',sort='new',lbOn=null,cur=null,ssTimer=null,slideshow=false,lastI=null,galCleanup=null;
+function store_get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
 const he=n=>n.toLocaleString('he-IL');
 const cover=a=>{const p=a.f.filter(x=>!x[1]);return (p[Math.floor(p.length/3)]||a.f[0])[0]};
 const vids=a=>a.f.filter(x=>x[1]).length;
@@ -290,6 +314,7 @@ function home(){
   <label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="q" type="search" placeholder="חיפוש אירוע, רב או חג" aria-label="חיפוש" value="${esc(q)}"></label>
   <select id="sort" aria-label="מיון"><option value="new">מהחדש לישן</option><option value="old">מהישן לחדש</option><option value="big">הגדולים ביותר</option><option value="abc">לפי א–ב</option></select>
   <a class="btn" href="#${K}/fav">♥ מועדפים${FAV.size?` (${FAV.size})`:''}</a>
+  <a class="btn" href="#${K}/people" id="pplb" ${P.length?'':'hidden'}>👤 לפי אנשים</a>
   <button class="btn" id="rnd">🎲 תמונה אקראית</button></div>
   <div class="row chips" role="group" aria-label="נושא"><button data-c="" class="${cat?'':'on'}">כל הנושאים<span class="n">${he(allN)}</span></button>${cats.map(c=>`<button data-c="${esc(c)}" class="${c==cat?'on':''}" title="${he(cc(c))} תמונות וסרטונים">${esc(c)}<span class="n">${he(cc(c))}</span></button>`).join('')}</div>
   <div class="row chips tags" role="group" aria-label="תגיות"><span class="lbl">תגיות:</span>${tags.map(([t,n])=>`<button data-t="${esc(t.trim())}" class="${q.trim()==t.trim()?'on':''}">${esc(t.trim())}<span class="n">${n}</span></button>`).join('')}</div></div></div>
@@ -438,6 +463,35 @@ function favs(){
   if(items.length){gallery($('#gh'),items,'המועדפים שלי');bindViews($('#gh'),items,'המועדפים שלי')}
 }
 
+/* ===== אנשים (זיהוי פנים) ===== */
+let PH={}; // מזהה תמונה -> [אלבום, אינדקס]
+const pname=(k)=>NAMES[k]||`אדם ${k+1}`;
+function avatar(p){
+  const d=document.createElement('span');d.className='av';
+  const im=new Image();im.alt='';im.src=p.a;im.style.cssText='inset:0;width:100%;height:100%';onLoad(im);d.append(im);return d;
+}
+function people(){
+  galCleanup?.();
+  app.innerHTML=`<header class="ahero"><div class="wrap"><a class="btn" href="#${K}">→ כל האלבומים</a><h2>👤 לפי אנשים</h2>
+  <p class="meta">${he(P.length)} אנשים שמופיעים בכמה תמונות · לחצו על פרצוף כדי לראות את כל התמונות שלו</p></div></header>
+  <main class="wrap"><p class="note">הקיבוץ נעשה אוטומטית לפי זיהוי פנים, ולפעמים הוא טועה: אותו אדם יכול להופיע פעמיים, או שתמונה של מישהו אחר תיכנס לקבוצה.</p><div class="ppl" id="ppl"></div></main>`;
+  scrollTo({top:0,behavior:'instant'});
+  const L=$('#ppl');
+  P.forEach((p,k)=>{const a=document.createElement('a');a.className='pp';a.href=`#${K}/p/${k}`;a.append(avatar(p));
+    a.insertAdjacentHTML('beforeend',`<b>${esc(pname(k))}</b><small>${he(p.p.length)} תמונות</small>`);L.append(a);reveal(a)});
+}
+function person(k){
+  const p=P[k],items=p.p.map(([id])=>PH[id]).filter(Boolean);
+  app.innerHTML=`<header class="ahero"><div class="wrap"><a class="btn" href="#${K}/people">→ כל האנשים</a>
+  <div class="phd"><span id="pav"></span><div><h2>${esc(pname(k))}</h2><p class="meta">${he(items.length)} תמונות מתוך ${he(new Set(items.map(x=>x[0].id)).size)} אירועים</p>
+  <div class="tools"><button class="btn" id="nm">✎ ${NAMES[k]?'שינוי השם':'תנו שם'}</button></div></div></div></div></header>
+  ${viewBar(items.length)}<div class="wrap" id="gh"></div><div style="height:50px"></div>`;
+  $('#pav').replaceWith(avatar(p));
+  scrollTo({top:0,behavior:'instant'});
+  $('#nm').onclick=()=>{const v=prompt('שם האדם (נשמר בדפדפן הזה בלבד):',NAMES[k]||'');if(v==null)return;v.trim()?NAMES[k]=v.trim():delete NAMES[k];store.set('peopleNames',NAMES);person(k)};
+  gallery($('#gh'),items,pname(k));bindViews($('#gh'),items,pname(k));
+}
+
 /* ===== מסך מלא ===== */
 function nextPhoto(a,i){for(let k=i+1;k<a.f.length;k++)if(!a.f[k][1])return k;return -1}
 function light(a,i){
@@ -464,7 +518,7 @@ function light(a,i){
   let sx=null;const st=$('.stage',el);
   st.ontouchstart=e=>sx=e.touches[0].clientX;
   st.ontouchend=e=>{if(sx==null)return;const d=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(d)>50){const k=d>0?i+1:i-1;if(a.f[k])location.replace(`#${K}/a/${a.id}/${k}`)}};
-  lbOn.go=k=>{if(a.f[k])location.replace(`#${K}/a/${a.id}/${k}`)};lbOn.i=i;lbOn.back=cur=='fav'?`#${K}/fav`:`#${K}/a/${a.id}`;lbOn.ss=()=>{slideshow=!slideshow;light(a,i)};
+  lbOn.go=k=>{if(a.f[k])location.replace(`#${K}/a/${a.id}/${k}`)};lbOn.i=i;lbOn.back=cur=='fav'?`#${K}/fav`:String(cur).startsWith('P:')?`#${K}/p/${cur.slice(2)}`:`#${K}/a/${a.id}`;lbOn.ss=()=>{slideshow=!slideshow;light(a,i)};
   $('.lbtop .btn',el).href=lbOn.back;
 }
 function closeLb(keep){clearTimeout(ssTimer);if(!keep){slideshow=false;lastI=null}if(lbOn){lbOn.remove();lbOn=null;document.body.style.overflow=''}}
@@ -506,26 +560,50 @@ async function downloadStamped(id, btn){
 document.addEventListener('click',e=>{const b=e.target.closest('#dl');if(b)downloadStamped(b.dataset.id,b);});
 function route(){
   clearInterval(heroTimer); heroTimer=null;
+  if(/^#[^/]+\/people$/.test(location.hash)){closeLb();cur='people';people();return}
+  const pm=location.hash.match(/^#[^/]+\/p\/(\d+)$/);if(pm&&P[+pm[1]]){if(cur=='P:'+pm[1]&&lbOn){closeLb();return}closeLb();cur='P:'+pm[1];person(+pm[1]);return}
   if(/^#[^/]+\/fav$/.test(location.hash)){const was=!!lbOn;closeLb();if(cur!='fav'){cur='fav';favs()}else if(was)refreshHearts();return}
   const m=location.hash.match(/^#[^/]+\/a\/([^/]+)(?:\/(\d+))?/),a=m&&A.find(x=>x.id==m[1]);
   if(!a){closeLb();cur=null;home();return}
-  if(m[2]!=null&&a.f[+m[2]]){if(cur!==a.id&&cur!='fav'){album(a);cur=a.id}light(a,+m[2]);return}
+  if(m[2]!=null&&a.f[+m[2]]){if(cur!==a.id&&cur!='fav'&&!String(cur).startsWith('P:')){album(a);cur=a.id}light(a,+m[2]);return}
   if(cur!==a.id){closeLb();album(a);cur=a.id}else{const was=!!lbOn;closeLb();if(was)refreshHearts()}
 }
 addEventListener('hashchange',route);
 new MutationObserver(()=>{ if(document.querySelector('.strip') && !heroTimer) startHero(); }).observe(app,{childList:true});
 const topB=$('#top');topB.onclick=()=>scrollTo({top:0,behavior:RM?'auto':'smooth'});
-const denied=()=>{app.innerHTML='<p class="wrap none">הגישה לאלבומים היא דרך הקישור המלא בלבד. בקשו את הקישור ממי ששיתף אתכם.</p>'};
-K=location.hash.slice(1).split('/')[0];
-(async()=>{
-  if(!K)return denied();
+const SKEY='albumKey';
+function loginScreen(err){
+  app.innerHTML=`<main class="wrap login"><img src="logo.png" alt=""><h1>אלבום תמונות- ישיבת מאור טוביה</h1>
+  <p>הכניסה לבני הישיבה בלבד. הקלידו את הסיסמה שקיבלתם מהישיבה.</p>
+  <form id="lf"><input id="pw" type="password" autocomplete="current-password" placeholder="סיסמה" aria-label="סיסמה" required>
+  <button class="btn gold">כניסה</button></form><p class="err" role="alert">${err||''}</p>
+  <a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/972584485679?text=${encodeURIComponent('שלום, אשמח לקבל את הסיסמה לאלבום התמונות של ישיבת מאור טוביה')}">אין לכם סיסמה? בקשו בוואטסאפ</a></main>`;
+  $('#pw').focus();
+  $('#lf').onsubmit=async e=>{e.preventDefault();const b=$('#lf button');b.textContent='בודק…';b.disabled=true;
+    try{const salt=new Uint8Array(await (await fetch('salt.bin',{cache:'no-store'})).arrayBuffer());
+      const base=await crypto.subtle.importKey('raw',new TextEncoder().encode($('#pw').value.trim()),'PBKDF2',false,['deriveKey']);
+      const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:200000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},true,['decrypt']);
+      if(await unlock(key)){const raw=new Uint8Array(await crypto.subtle.exportKey('raw',key));store.set(SKEY,btoa(String.fromCharCode(...raw)))}
+      else loginScreen('הסיסמה שגויה. נסו שוב.');
+    }catch(e){loginScreen('הסיסמה שגויה. נסו שוב.')}};
+}
+async function unlock(key){
   try{
-    const raw=Uint8Array.from(atob(K.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
-    const key=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']);
-    const b=new Uint8Array(await (await fetch('catalog.bin')).arrayBuffer());
+    const b=new Uint8Array(await (await fetch('catalog.bin',{cache:'no-store'})).arrayBuffer());
     const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},key,b.slice(12));
-    A=JSON.parse(new TextDecoder().decode(pt));route();
-  }catch(e){denied()}
+    A=JSON.parse(new TextDecoder().decode(pt));
+  }catch(e){return false}
+  A.forEach(a=>a.f.forEach((f,i)=>PH[f[0]]=[a,i]));
+  try{const pb=new Uint8Array(await (await fetch('people.bin',{cache:'no-store'})).arrayBuffer());
+    P=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:pb.slice(0,12)},key,pb.slice(12))))}catch(e){P=[]}
+  route();return true;
+}
+K='m';
+(async()=>{
+  const saved=store.get(SKEY,null);
+  if(saved){try{const key=await crypto.subtle.importKey('raw',Uint8Array.from(atob(saved),c=>c.charCodeAt(0)),'AES-GCM',true,['decrypt']);if(await unlock(key))return}catch(e){}
+    localStorage.removeItem(SKEY)}
+  loginScreen(saved?'הסיסמה הוחלפה. הקלידו את הסיסמה החדשה.':'');
 })();
 </script>
 </body>
